@@ -1,0 +1,11 @@
+{
+  "name": "ga03-table-management-root",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "dependencies": {
+    "@nestjs/config": "^4.0.2"
+  }
+}
