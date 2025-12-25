@@ -9,9 +9,6 @@ node_modules/
 dist/
 *.tsbuildinfo
 
-# Env
-.env
-
 # Prisma
 prisma/generated/
 
