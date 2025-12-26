@@ -7,6 +7,7 @@ import { TablesModule } from './tables/tables.module';
 import { QrTokenModule } from './qr-token/qr-token.module';
 import { QrExportModule } from './qr-export/qr-export.module';
 import { MenuModule } from './menu/menu.module';
+import { MenuPhotosModule } from './menu-photos/menu-photos.module';
 
 @Module({
   imports: [
@@ -18,8 +19,9 @@ import { MenuModule } from './menu/menu.module';
     QrTokenModule,
     QrExportModule,
     MenuModule,
+    MenuPhotosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
