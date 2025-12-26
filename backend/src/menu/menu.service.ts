@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class MenuService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async getGuestMenu(
     restaurantId: string,
@@ -100,14 +100,8 @@ export class MenuService {
           modifier_groups: {
             include: {
               modifier_group: {
-                where: {
-                  status: 'active',
-                },
                 include: {
                   options: {
-                    where: {
-                      status: 'active',
-                    },
                     orderBy: {
                       price_adjustment: 'asc',
                     },
@@ -115,8 +109,19 @@ export class MenuService {
                       id: true,
                       name: true,
                       price_adjustment: true,
+                      status: true,
                     },
                   },
+                },
+                select: {
+                  id: true,
+                  name: true,
+                  selection_type: true,
+                  is_required: true,
+                  min_selections: true,
+                  max_selections: true,
+                  status: true,
+                  options: true,
                 },
               },
             },
@@ -143,7 +148,7 @@ export class MenuService {
       })),
       modifierGroups: item.modifier_groups
         .map((mg) => mg.modifier_group)
-        .filter((g) => g !== null)
+        .filter((g) => g !== null && g.status === 'active')
         .map((group) => ({
           id: group.id,
           name: group.name,
@@ -151,11 +156,13 @@ export class MenuService {
           isRequired: group.is_required,
           minSelections: group.min_selections,
           maxSelections: group.max_selections,
-          options: group.options.map((opt) => ({
-            id: opt.id,
-            name: opt.name,
-            priceAdjustment: parseFloat(opt.price_adjustment.toString()),
-          })),
+          options: group.options
+            .filter((opt) => opt.status === 'active')
+            .map((opt) => ({
+              id: opt.id,
+              name: opt.name,
+              priceAdjustment: parseFloat(opt.price_adjustment.toString()),
+            })),
         })),
     }));
 

@@ -8,6 +8,7 @@ import { QrTokenModule } from './qr-token/qr-token.module';
 import { QrExportModule } from './qr-export/qr-export.module';
 import { MenuModule } from './menu/menu.module';
 import { MenuPhotosModule } from './menu-photos/menu-photos.module';
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MenuPhotosModule } from './menu-photos/menu-photos.module';
     QrExportModule,
     MenuModule,
     MenuPhotosModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
