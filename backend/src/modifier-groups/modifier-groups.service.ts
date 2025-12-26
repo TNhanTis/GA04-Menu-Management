@@ -76,7 +76,17 @@ export class ModifierGroupsService {
         }
         : undefined,
     });
-    return groups;
+
+    // Convert Decimal to number for JSON serialization
+    return groups.map((group: any) => ({
+      ...group,
+      options: group.options
+        ? group.options.map((option: any) => ({
+          ...option,
+          price_adjustment: Number(option.price_adjustment),
+        }))
+        : undefined,
+    }));
   }
   async findOne(id: string) {
     const group = await this.prisma.modifierGroup.findUnique({
