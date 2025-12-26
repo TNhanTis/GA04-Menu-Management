@@ -9,6 +9,7 @@ import { QrExportModule } from './qr-export/qr-export.module';
 import { MenuModule } from './menu/menu.module';
 import { MenuPhotosModule } from './menu-photos/menu-photos.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ModifierGroupsModule } from './modifier-groups/modifier-groups.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CategoriesModule } from './categories/categories.module';
     MenuModule,
     MenuPhotosModule,
     CategoriesModule,
+    ModifierGroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
