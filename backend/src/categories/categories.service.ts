@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -95,6 +96,52 @@ export class CategoriesService {
     return this.prisma.menuCategory.update({
       where: { id },
       data: updateDto,
+    });
+  }
+
+  async updateStatus(id: string, status: string) {
+    // Validate status value
+    if (!['active', 'inactive'].includes(status)) {
+      throw new BadRequestException('Status must be active or inactive');
+    }
+    const category = await this.prisma.menuCategory.findUnique({
+      where: { id },
+    });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return this.prisma.menuCategory.update({
+      where: { id },
+      data: { status },
+    });
+  }
+
+  async softDelete(id: string) {
+    const category = await this.prisma.menuCategory.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: {
+            menu_items: {
+              where: { status: 'available', is_deleted: false },
+            },
+          },
+        },
+      },
+    });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    // Business rule: Không xóa nếu còn items active
+    if (category._count.menu_items > 0) {
+      throw new BadRequestException(
+        'Cannot delete category with active items. Set status to inactive instead.',
+      );
+    }
+    // Soft delete = set status inactive
+    return this.prisma.menuCategory.update({
+      where: { id },
+      data: { status: 'inactive' },
     });
   }
 }
