@@ -37,11 +37,13 @@ export class QrTokenService {
     });
 
     // 5. Tạo URL đầy đủ
-    const frontendUrl =
-      process.env.FRONTEND_MENU_URL || 'https://ga03-table-management-frontend.vercel.app/menu';
+    const frontendUrl = process.env.FRONTEND_MENU_URL;
+    if (!frontendUrl) {
+      throw new Error(
+        'FRONTEND_MENU_URL environment variable is required for QR code generation',
+      );
+    }
     const qrUrl = `${frontendUrl}?table=${tableId}&token=${token}`;
-    console.log('[TOKEN] QR URL:', qrUrl);
-    console.log('[TOKEN] FRONTEND_MENU_URL env:', process.env.FRONTEND_MENU_URL);
 
     return { token, qrUrl, tableNumber: table.table_number };
   }

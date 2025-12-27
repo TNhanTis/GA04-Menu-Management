@@ -29,11 +29,13 @@ export class QrExportService {
     doc.moveDown();
 
     // Sinh ảnh QR từ URL đầy đủ
-    const frontendUrl =
-      process.env.FRONTEND_MENU_URL || 'https://ga03-table-management-frontend.vercel.app/menu';
+    const frontendUrl = process.env.FRONTEND_MENU_URL;
+    if (!frontendUrl) {
+      throw new Error(
+        'FRONTEND_MENU_URL environment variable is required for QR code generation',
+      );
+    }
     const qrUrl = `${frontendUrl}?table=${table.id}&token=${table.qr_token}`;
-    console.log('[PDF] QR URL:', qrUrl);
-    console.log('[PDF] FRONTEND_MENU_URL env:', process.env.FRONTEND_MENU_URL);
     const qrDataUrl = await QRCode.toDataURL(qrUrl, {
       width: 300,
       errorCorrectionLevel: 'H',
@@ -58,12 +60,14 @@ export class QrExportService {
 
   // 1.1 Tạo 1 file PNG cho 1 bàn
   async generateTablePng(table: Table, res: Response) {
-    const frontendUrl =
-      process.env.FRONTEND_MENU_URL || 'https://ga03-table-management-frontend.vercel.app/menu';
+    const frontendUrl = process.env.FRONTEND_MENU_URL;
+    if (!frontendUrl) {
+      throw new Error(
+        'FRONTEND_MENU_URL environment variable is required for QR code generation',
+      );
+    }
     const qrUrl = `${frontendUrl}?table=${table.id}&token=${table.qr_token}`;
-    console.log('[PNG] QR URL:', qrUrl);
-    console.log('[PNG] FRONTEND_MENU_URL env:', process.env.FRONTEND_MENU_URL);
-    
+
     const buffer = await QRCode.toBuffer(qrUrl, {
       width: 500,
       errorCorrectionLevel: 'H',
@@ -91,13 +95,16 @@ export class QrExportService {
     archive.pipe(res);
 
     // Duyệt qua danh sách bàn và thêm file vào zip
+    const frontendUrl = process.env.FRONTEND_MENU_URL;
+    if (!frontendUrl) {
+      throw new Error(
+        'FRONTEND_MENU_URL environment variable is required for QR code generation',
+      );
+    }
+
     for (const table of tables) {
       // Tạo QR từ URL đầy đủ
-      const frontendUrl =
-        process.env.FRONTEND_MENU_URL || 'https://ga03-table-management-frontend.vercel.app/menu';
       const qrUrl = `${frontendUrl}?table=${table.id}&token=${table.qr_token}`;
-      console.log('[ZIP] QR URL:', qrUrl);
-      console.log('[ZIP] FRONTEND_MENU_URL env:', process.env.FRONTEND_MENU_URL);
       const buffer = await QRCode.toBuffer(qrUrl, {
         width: 500,
         errorCorrectionLevel: 'H',
