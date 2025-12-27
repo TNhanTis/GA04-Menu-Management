@@ -10,21 +10,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { MenuPhotosService } from './menu-photos.service';
-import { v4 as uuidv4 } from 'uuid';
 
-// Multer configuration
-const storage = diskStorage({
-  destination: './uploads',
-  filename: (req, file, cb) => {
-    const randomName = uuidv4();
-    const ext = extname(file.originalname);
-    cb(null, `${randomName}${ext}`);
-  },
-});
-
+// Multer configuration for memory storage (files will be uploaded to Supabase)
 const fileFilter = (req: any, file: any, cb: any) => {
   const allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
   if (allowedMimes.includes(file.mimetype)) {
@@ -46,7 +34,6 @@ export class MenuPhotosController {
   @Post()
   @UseInterceptors(
     FilesInterceptor('photos', 10, {
-      storage,
       fileFilter,
       limits: {
         fileSize: 5 * 1024 * 1024, // 5MB

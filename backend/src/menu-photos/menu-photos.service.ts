@@ -4,8 +4,9 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
+import { supabase, SUPABASE_BUCKET } from '../config/supabase.config';
+import { v4 as uuidv4 } from 'uuid';
+import { extname } from 'path';
 
 @Injectable()
 export class MenuPhotosService {
@@ -28,17 +29,42 @@ export class MenuPhotosService {
 
     const isFirstPhoto = existingPhotos.length === 0;
 
-    // Create photo records
+    // Upload files to Supabase Storage and create photo records
     const photos = await Promise.all(
-      files.map((file, index) =>
-        this.prisma.menuItemPhoto.create({
+      files.map(async (file, index) => {
+        // Generate unique filename
+        const randomName = uuidv4();
+        const ext = extname(file.originalname);
+        const fileName = `${randomName}${ext}`;
+        const filePath = `menu-items/${fileName}`;
+
+        // Upload to Supabase Storage
+        const { data, error } = await supabase.storage
+          .from(SUPABASE_BUCKET)
+          .upload(filePath, file.buffer, {
+            contentType: file.mimetype,
+            upsert: false,
+          });
+
+        if (error) {
+          console.error('Supabase upload error:', error);
+          throw new BadRequestException(`Failed to upload file: ${error.message}`);
+        }
+
+        // Get public URL
+        const { data: urlData } = supabase.storage
+          .from(SUPABASE_BUCKET)
+          .getPublicUrl(filePath);
+
+        // Create photo record in database
+        return this.prisma.menuItemPhoto.create({
           data: {
             menu_item_id: itemId,
-            url: `/uploads/${file.filename}`,
+            url: urlData.publicUrl,
             is_primary: isFirstPhoto && index === 0,
           },
-        }),
-      ),
+        });
+      }),
     );
 
     return photos;
@@ -76,10 +102,20 @@ export class MenuPhotosService {
       }
     }
 
-    // Delete file from filesystem
+    // Delete file from Supabase Storage
     try {
-      const filePath = join(process.cwd(), photo.url);
-      await unlink(filePath);
+      // Extract file path from URL
+      const url = new URL(photo.url);
+      const pathParts = url.pathname.split('/');
+      const filePath = pathParts.slice(-2).join('/'); // Get 'menu-items/filename.jpg'
+      
+      const { error } = await supabase.storage
+        .from(SUPABASE_BUCKET)
+        .remove([filePath]);
+
+      if (error) {
+        console.error('Failed to delete file from Supabase:', error);
+      }
     } catch (error) {
       console.error('Failed to delete file:', error);
       // Continue with DB deletion even if file deletion fails

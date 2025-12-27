@@ -36,14 +36,21 @@ export class MenuItemsController {
    * Get all menu items with filtering, sorting, and pagination
    */
   @Get()
-  async findAll(
-    @Query('restaurant_id') restaurantId: string,
-    @Query(new ValidationPipe({ transform: true, whitelist: true }))
-    query: QueryItemsDto,
-  ) {
+  async findAll(@Query() allQuery: any) {
+    // Extract and remove restaurant_id from query
+    const { restaurant_id, ...queryParams } = allQuery;
+    
     // Default restaurant ID for testing
     const effectiveRestaurantId =
-      restaurantId || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+      restaurant_id || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+    
+    // Validate the remaining query parameters
+    const validationPipe = new ValidationPipe({ transform: true, whitelist: true });
+    const query = await validationPipe.transform(queryParams, {
+      type: 'query',
+      metatype: QueryItemsDto,
+    });
+    
     return this.menuItemsService.findAll(effectiveRestaurantId, query);
   }
 

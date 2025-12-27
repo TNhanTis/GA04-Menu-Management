@@ -231,12 +231,6 @@ export default function ModifiersManagement() {
                         ← Back to Tables
                     </button>
                     <button
-                        className="btn btn-info"
-                        onClick={() => (window.location.href = "/categories")}
-                    >
-                        📁 Categories
-                    </button>
-                    <button
                         className="btn btn-primary"
                         onClick={() => {
                             resetGroupForm();
@@ -260,9 +254,11 @@ export default function ModifiersManagement() {
                             key={group.id}
                             style={{
                                 marginBottom: "20px",
-                                border: "1px solid #ddd",
-                                borderRadius: "8px",
+                                border: "1px solid #334155",
+                                borderRadius: "12px",
                                 overflow: "hidden",
+                                background: "#1e293b",
+                                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)"
                             }}
                         >
                             {/* Group Header */}
@@ -271,21 +267,29 @@ export default function ModifiersManagement() {
                                     display: "flex",
                                     justifyContent: "space-between",
                                     alignItems: "center",
-                                    padding: "15px",
-                                    background: "#f5f5f5",
+                                    padding: "15px 20px",
+                                    background: "#0f172a",
                                     cursor: "pointer",
+                                    borderBottom: expandedGroups.has(group.id) ? "1px solid #334155" : "none",
+                                    transition: "all 0.2s ease"
                                 }}
                                 onClick={() => toggleGroup(group.id)}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.background = "#1e293b";
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.background = "#0f172a";
+                                }}
                             >
-                                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                    <span style={{ fontSize: "20px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                    <span style={{ fontSize: "18px", color: "#a5b4fc" }}>
                                         {expandedGroups.has(group.id) ? "▼" : "▶"}
                                     </span>
-                                    <strong>{group.name}</strong>
+                                    <strong style={{ color: "#e2e8f0", fontSize: "1.1rem" }}>{group.name}</strong>
                                     <span
                                         style={{
                                             fontSize: "12px",
-                                            color: "#666",
+                                            color: "#94a3b8",
                                             marginLeft: "10px",
                                         }}
                                     >
@@ -311,7 +315,7 @@ export default function ModifiersManagement() {
 
                             {/* Options (Expandable) */}
                             {expandedGroups.has(group.id) && (
-                                <div style={{ padding: "15px", background: "white" }}>
+                                <div style={{ padding: "20px", background: "#1e293b" }}>
                                     {group.options && group.options.length > 0 ? (
                                         <div style={{ marginBottom: "15px" }}>
                                             {group.options.map((option) => (
@@ -321,32 +325,42 @@ export default function ModifiersManagement() {
                                                         display: "flex",
                                                         justifyContent: "space-between",
                                                         alignItems: "center",
-                                                        padding: "10px",
-                                                        border: "1px solid #eee",
-                                                        borderRadius: "4px",
-                                                        marginBottom: "8px",
-                                                        background: option.status === "inactive" ? "#f9f9f9" : "white",
+                                                        padding: "12px 15px",
+                                                        border: "1px solid #334155",
+                                                        borderRadius: "8px",
+                                                        marginBottom: "10px",
+                                                        background: option.status === "inactive" ? "#0f172a" : "#0f172a",
+                                                        transition: "all 0.2s ease"
+                                                    }}
+                                                    onMouseOver={(e) => {
+                                                        e.currentTarget.style.borderColor = "#6366f1";
+                                                        e.currentTarget.style.background = "#1e293b";
+                                                    }}
+                                                    onMouseOut={(e) => {
+                                                        e.currentTarget.style.borderColor = "#334155";
+                                                        e.currentTarget.style.background = "#0f172a";
                                                     }}
                                                 >
                                                     <div>
-                                                        <strong>{option.name}</strong>
-                                                        <span style={{ marginLeft: "10px", color: "#666" }}>
-                                                            (${Number(option.price_adjustment) >= 0 ? "+" : ""}
-                                                            {Number(option.price_adjustment).toFixed(2)})
+                                                        <strong style={{ color: "#e2e8f0" }}>{option.name}</strong>
+                                                        <span style={{ marginLeft: "10px", color: "#94a3b8", fontWeight: "500" }}>
+                                                            ({Number(option.price_adjustment) >= 0 ? "+" : ""}
+                                                            {Number(option.price_adjustment).toLocaleString()} VND)
                                                         </span>
                                                         {option.status === "inactive" && (
                                                             <span
                                                                 style={{
                                                                     marginLeft: "10px",
-                                                                    color: "#999",
+                                                                    color: "#64748b",
                                                                     fontSize: "12px",
+                                                                    fontStyle: "italic"
                                                                 }}
                                                             >
                                                                 (Inactive)
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <div style={{ display: "flex", gap: "5px" }}>
+                                                    <div style={{ display: "flex", gap: "8px" }}>
                                                         <button
                                                             className="btn btn-sm btn-secondary"
                                                             onClick={() => openEditOptionModal(group, option)}
@@ -364,7 +378,7 @@ export default function ModifiersManagement() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p style={{ color: "#999", marginBottom: "15px" }}>
+                                        <p style={{ color: "#64748b", marginBottom: "15px", fontStyle: "italic" }}>
                                             No options yet
                                         </p>
                                     )}

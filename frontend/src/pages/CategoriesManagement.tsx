@@ -142,12 +142,6 @@ export default function CategoriesManagement() {
                         ← Back to Tables
                     </button>
                     <button
-                        className="btn btn-info"
-                        onClick={() => (window.location.href = "/modifiers")}
-                    >
-                        🎛️ Modifiers
-                    </button>
-                    <button
                         className="btn btn-primary"
                         onClick={() => setShowCreateModal(true)}
                     >

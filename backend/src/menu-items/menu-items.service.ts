@@ -375,23 +375,6 @@ export class MenuItemsService {
           include: {
             modifier_group: {
               include: {
-                options: {
-                  select: {
-                    id: true,
-                    name: true,
-                    price_adjustment: true,
-                    status: true,
-                  },
-                },
-              },
-              select: {
-                id: true,
-                name: true,
-                selection_type: true,
-                is_required: true,
-                min_selections: true,
-                max_selections: true,
-                status: true,
                 options: true,
               },
             },

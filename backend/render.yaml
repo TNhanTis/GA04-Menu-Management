@@ -15,6 +15,10 @@ services:
         sync: false
       - key: FRONTEND_MENU_URL
         sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
       - key: PORT
         value: 3000
     healthCheckPath: /
