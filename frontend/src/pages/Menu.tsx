@@ -67,7 +67,7 @@ interface MenuData {
 }
 
 export default function Menu() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const tableId = searchParams.get("table");
   const token = searchParams.get("token");
 
