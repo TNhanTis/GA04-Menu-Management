@@ -298,7 +298,7 @@ export default function TableManagement() {
                 {table.qr_token ? (
                   <div className="qr-section">
                     <QRCode
-                      value={`https://ga03-table-management-frontend.vercel.app/menu?table=${table.id}&token=${table.qr_token}`}
+                      value={`${import.meta.env.VITE_MENU_URL}?table=${table.id}&token=${table.qr_token}`}
                       size={120}
                       level="H"
                       style={{
